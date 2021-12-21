@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const opinionSchema = new mongoose.Schema({
     title: {
         type: String,
-        required
+        required: true
     },
     content: {
         type: String,
-        required
+        required: true
     },
     name: {
         type: String,
-        required
+        required: true
     },
     rating: {
         type: Number,
