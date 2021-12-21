@@ -7,8 +7,8 @@ const shoeProductSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    size: {
-        type: Number,
+    sizes: {
+        type: [Number],
         required: true
     },
     colors: {
@@ -40,11 +40,11 @@ const shoeProductSchema = new mongoose.Schema({
         type: [Number]
     },
     sex: {
-        type: String,
+        type: [String],
         required: true
     },
     type: {
-        type: String,
+        type: [String],
         required: true
     },
     opinions: {
