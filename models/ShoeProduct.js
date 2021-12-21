@@ -11,10 +11,10 @@ const shoeProductSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    colors: [{
-        type: String,
+    colors: {
+        type: [String],
         required: true
-    }],
+    },
     brand: {
         type: Brand,
         required: true
@@ -28,17 +28,17 @@ const shoeProductSchema = new mongoose.Schema({
         min: 1,
         max: 100
     },
-    photosUrls: [{
-        type: String,
+    photosUrls: {
+        type: [String],
         required: true
-    }],
+    },
     amount: {
         type: Number,
         required: true
     },
-    ratings: [{
-        type: Number
-    }],
+    ratings: {
+        type: [Number]
+    },
     sex: {
         type: String,
         required: true
@@ -48,7 +48,31 @@ const shoeProductSchema = new mongoose.Schema({
         required: true
     },
     opinions: {
-        type: Opinion
+        type: [{
+            title: {
+                type: String,
+                required: true
+            },
+            content: {
+                type: String,
+                required: true
+            },
+            name: {
+                type: String,
+                required: true
+            },
+            rating: {
+                type: Number,
+                required: true,
+                min: 1,
+                max: 5
+            },
+            timestamps: {
+                createdAt: true,
+                updatedAt: false
+            }
+        }],
+        default: []
     }
 
 })
