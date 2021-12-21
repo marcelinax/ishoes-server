@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
-const Brand = require('./Brand');
-const Opinion = require('./Opinion');
+
 
 const shoeProductSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
     },
-    sizes: {
-        type: [Number],
+    size: {
+        type: Number,
         required: true
     },
     colors: {
@@ -16,12 +15,18 @@ const shoeProductSchema = new mongoose.Schema({
         required: true
     },
     brand: {
-        type: Brand,
+        type: String,
+        ref: 'Brand',
         required: true
     },
     price: {
-        type: mongoose.Schema.Types.Decimal128,
+        type: Number,
         required: true
+    },
+    isOverpriced: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     discount: {
         type: Number,
@@ -35,9 +40,6 @@ const shoeProductSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: true
-    },
-    ratings: {
-        type: [Number]
     },
     sex: {
         type: [String],
@@ -67,14 +69,16 @@ const shoeProductSchema = new mongoose.Schema({
                 min: 1,
                 max: 5
             },
-            timestamps: {
-                createdAt: true,
-                updatedAt: false
+            createdAt: {
+                type: Number,
+                default: new Date(),
             }
-        }],
+        },
+        ],
         default: []
-    }
-
-})
+    }    
+},
+{timestamps: true}
+)
 
 module.exports = mongoose.model('ShoeProduct', shoeProductSchema);
