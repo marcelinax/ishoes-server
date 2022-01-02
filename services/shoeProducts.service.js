@@ -51,7 +51,7 @@ const createOpinionForShoeProduct = async (shoeProductId, opinion) => {
     return;
 }
 
-const searchShoeProducts = async (query, brand, size, sex, sortBy, sortHow, minPrice, maxPrice,isOverpriced, type,colors) => {
+const searchShoeProducts = async (query, brand,material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors) => {
     let searchingShoeProducts = await ShoeProduct.find().populate('brand').lean();
 
     if (query) {
@@ -80,19 +80,21 @@ const searchShoeProducts = async (query, brand, size, sex, sortBy, sortHow, minP
 
     if (size) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.size === size);
 
-    if(sex) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.sex.includes(sex));
+    if(gender) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.gender.includes(gender));
 
     if (minPrice && maxPrice) {
         searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => (shoeProduct.price - (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2))) >= minPrice && (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2)) <= maxPrice);
     }
 
-    if(isOverpriced !== null && isOverpriced !== undefined) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.isOverpriced === isOverpriced)
+    if(isOnSale !== null && isOnSale !== undefined) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.isOnSale === isOnSale)
 
     if (brand) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.brand.name.toLowerCase() === brand.name.toLowerCase());
 
     if (type) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.type.includes(type));
     
-    if (colors) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.colors.includes(colors) );
+    if (material) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.material.includes(material));
+    
+    if (colors) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.colors.includes(colors));
 
     return searchingShoeProducts;
 }

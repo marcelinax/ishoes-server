@@ -31,9 +31,9 @@ const createShoeProduct = async (req, res) => {
     if (validationResult(req).length > 0) return res.status(400).json(validationResult(req));
 
     try {
-        const { title, size, colors, brand, price, isOverpriced, discount, photosUrls, amount, sex, type, opinions } = req.body;
+        const { title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions } = req.body;
         const newShoeProduct = await shoeProductsService.createShoeProduct({
-            title, size, colors, brand, price, isOverpriced, discount, photosUrls, amount, sex, type, opinions
+            title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions
         })
         res.status(201).json(newShoeProduct);
     } catch (error) {
@@ -57,9 +57,9 @@ const updateShoeProduct = async (req, res) => {
 
     try {
         const id = req.params.id;
-        const { title, size, colors, brand, price, isOverpriced, discount, photosUrls, amount, sex, type, opinions } = req.body;
+        const { title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions } = req.body;
         const updatedShoeProduct = await shoeProductsService.updateShoeProduct(id, {
-            title, size, colors, brand, price, isOverpriced, discount, photosUrls, amount, sex, type, opinions
+            title, size, colors, material, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions
         })
         res.status(201).json(updatedShoeProduct);
     } catch (error) {
@@ -68,8 +68,8 @@ const updateShoeProduct = async (req, res) => {
 }
 
 const searchShoeProduct = async (req, res) => {
-    const { query, brand, size, sex, sortBy, sortHow, minPrice, maxPrice,isOverpriced, type,colors } = req.body;
-    res.json(await shoeProductsService.searchShoeProducts(query, brand, size, sex, sortBy, sortHow, minPrice, maxPrice,isOverpriced, type,colors));
+    const { query, brand, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors } = req.body;
+    res.json(await shoeProductsService.searchShoeProducts(query, brand, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors));
 };
 
 const getRatingsForShoeProduct = async (req, res) => {

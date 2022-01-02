@@ -19,11 +19,15 @@ const shoeProductSchema = new mongoose.Schema({
         ref: 'Brand',
         required: true
     },
+    material: {
+        type: String,
+        required:true
+    },
     price: {
         type: Number,
         required: true
     },
-    isOverpriced: {
+    isOnSale: {
         type: Boolean,
         required: true,
         default: false
@@ -41,7 +45,7 @@ const shoeProductSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    sex: {
+    gender: {
         type: [String],
         required: true
     },
