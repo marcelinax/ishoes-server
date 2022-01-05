@@ -31,9 +31,12 @@ const createShoeProduct = async (req, res) => {
     if (validationResult(req).length > 0) return res.status(400).json(validationResult(req));
 
     try {
-        const { title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions } = req.body;
+        const { model, size, material, colors, brand, price, isOnSale, discount, photos, amount, gender, type, opinions } = req.body;
+        if (await shoeProductsService.checkIfShoeProductObjExists({ model, size, material, colors: colors.sort(), brand, price, gender, type })) {
+            return res.status(400).json({ message: errors.PRODUCT_ALREADY_EXISTS });
+        }
         const newShoeProduct = await shoeProductsService.createShoeProduct({
-            title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions
+            model, size, material, colors, brand, price, isOnSale, discount, photos, amount, gender, type, opinions
         })
         res.status(201).json(newShoeProduct);
     } catch (error) {
@@ -57,9 +60,9 @@ const updateShoeProduct = async (req, res) => {
 
     try {
         const id = req.params.id;
-        const { title, size, material, colors, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions } = req.body;
+        const { model, size, material, colors, brand, price, isOnSale, discount, photos, amount, gender, type, opinions } = req.body;
         const updatedShoeProduct = await shoeProductsService.updateShoeProduct(id, {
-            title, size, colors, material, brand, price, isOnSale, discount, photosUrls, amount, gender, type, opinions
+            model, size, colors, material, brand, price, isOnSale, discount, photos, amount, gender, type, opinions
         })
         res.status(201).json(updatedShoeProduct);
     } catch (error) {
@@ -85,9 +88,9 @@ const getRatingsForShoeProduct = async (req, res) => {
 const createOpinionForShoeProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        const { title, content, name, rating } = req.body;
+        const { model, content, name, rating } = req.body;
         await shoeProductsService.createOpinionForShoeProduct(id, {
-            title, content, name, rating
+            model, content, name, rating
         });
         res.status(201).json({ message: 'Opinion has been added' });
     } catch (error) {

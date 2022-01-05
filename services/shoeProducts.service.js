@@ -17,6 +17,12 @@ const findShoeProductById = async (shoeProductId) => {
     return shoeProduct;
 }
 
+const checkIfShoeProductObjExists = async (shoeProduct) => {
+    console.log({ ...shoeProduct });
+    const shoeProductFind = await ShoeProduct.findOne({ ...shoeProduct });
+    return shoeProductFind !== null;
+}
+
 const createShoeProduct = async (shoeProduct) => {
     const createdShoeProduct = await new ShoeProduct(shoeProduct);
     await createdShoeProduct.save();
@@ -55,7 +61,7 @@ const searchShoeProducts = async (query, brand,material, size, gender, sortBy, s
     let searchingShoeProducts = await ShoeProduct.find().populate('brand').lean();
 
     if (query) {
-        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.title.toLowerCase().includes(query.toLowerCase())
+        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.model.toLowerCase().includes(query.toLowerCase())
             || shoeProduct.brand.name.toLowerCase().includes(query.toLowerCase()));
     }
 
@@ -108,5 +114,6 @@ module.exports = {
     searchShoeProducts,
     getAllSoldOutShoeProducts,
     getRatingsForShoeProduct,
-    createOpinionForShoeProduct
+    createOpinionForShoeProduct,
+    checkIfShoeProductObjExists
 }

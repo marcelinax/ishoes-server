@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 const shoeProductSchema = new mongoose.Schema({
-    title: {
+    model: {
         type: String,
         required: true,
     },
@@ -34,10 +34,11 @@ const shoeProductSchema = new mongoose.Schema({
     },
     discount: {
         type: Number,
-        min: 1,
-        max: 100
+        min: 0,
+        max: 100,
+        default: 0
     },
-    photosUrls: {
+    photos: {
         type: [String],
         required: true
     },
@@ -46,11 +47,11 @@ const shoeProductSchema = new mongoose.Schema({
         required: true
     },
     gender: {
-        type: [String],
+        type: String,
         required: true
     },
     type: {
-        type: [String],
+        type: String,
         required: true
     },
     opinions: {
