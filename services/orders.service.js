@@ -17,7 +17,7 @@ const createOrder = async  (newOrder) => {
 }
 
 const searchOrders = async (orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status ) => {
-    let searchingOrders = await Order.find().lean();
+    let searchingOrders = await Order.find().populate('products').lean();
 
     if (orderId) {
         searchingOrders = searchingOrders.filter(order => order.orderId.includes(orderId));
