@@ -16,7 +16,7 @@ const createOrder = async  (newOrder) => {
     return createdOrder;
 }
 
-const searchOrders = async (orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status ) => {
+const searchOrders = async (orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status,phone ) => {
     let searchingOrders = await Order.find().populate('products').lean();
 
     if (orderId) {
@@ -25,6 +25,10 @@ const searchOrders = async (orderId, email, fromDateOfOrder, toDateOfOrder, from
 
     if (email) {
         searchingOrders = searchingOrders.filter(order => order.email.toLowerCase().startsWith(email.toLowerCase()));
+    }
+
+    if (phone) {
+        searchingOrders = searchingOrders.filter(order => order.phone.startsWith(phone));
     }
 
     if (fromDateOfOrder) {

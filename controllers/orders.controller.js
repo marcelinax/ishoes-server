@@ -24,9 +24,9 @@ const createOrder = async (req, res) => {
     if (validationResult(req).length > 0) return res.status(400).json(validationResult(req));
 
     try {
-        const { name, surname, email, products, deliveryAddress, status, sendDate, paymentId } = req.body;
+        const { name, surname, email, products, deliveryAddress, status, sendDate, paymentId,phone } = req.body;
         const newOrder = await ordersService.createOrder({
-            name, surname, email, products, deliveryAddress, status, sendDate, paymentId
+            name, surname, email, products, deliveryAddress, status, sendDate, paymentId, phone
         });
         res.status(201).json(newOrder);
     } catch (error) {
@@ -35,8 +35,8 @@ const createOrder = async (req, res) => {
 }
 
 const searchOrder = async (req, res) => {
-    const { orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status  } = req.body;
-    res.json(await ordersService.searchOrders(orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status));
+    const { orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status, phone  } = req.body;
+    res.json(await ordersService.searchOrders(orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status,phone));
 }
 
 const changeOrderStatus = async (req, res) => {
