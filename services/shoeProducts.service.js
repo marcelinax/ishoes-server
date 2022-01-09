@@ -18,7 +18,6 @@ const findShoeProductById = async (shoeProductId) => {
 }
 
 const checkIfShoeProductObjExists = async (shoeProduct) => {
-    console.log({ ...shoeProduct });
     const shoeProductFind = await ShoeProduct.findOne({ ...shoeProduct });
     return shoeProductFind !== null;
 }
@@ -74,7 +73,11 @@ const searchShoeProducts = async (query, brand,material, size, gender, sortBy, s
 
     if (sortBy === 'added') {
         if (sortHow === 'newest') {
-            searchingShoeProducts = searchingShoeProducts.sort((a,b) => b.createdAt - a.createdAt)
+            searchingShoeProducts = searchingShoeProducts.sort((a, b) => b.createdAt - a.createdAt)
+            console.log(searchingShoeProducts)
+        }
+        if (sortHow === 'oldest') {
+            searchingShoeProducts = searchingShoeProducts.sort((a,b) => a.createdAt - b.createdAt)
         }
     }
 
@@ -86,7 +89,7 @@ const searchShoeProducts = async (query, brand,material, size, gender, sortBy, s
 
     if (size) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.size === size);
 
-    if(gender) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.gender.includes(gender));
+    if (gender && gender.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => gender.includes(shoeProduct.gender));
 
     if (minPrice && maxPrice) {
         searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => (shoeProduct.price - (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2))) >= minPrice && (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2)) <= maxPrice);
@@ -94,10 +97,10 @@ const searchShoeProducts = async (query, brand,material, size, gender, sortBy, s
 
     if(isOnSale !== null && isOnSale !== undefined) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.isOnSale === isOnSale)
 
-    if (brand) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.brand.name.toLowerCase() === brand.name.toLowerCase());
+    if (brand) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.brand._id.toString() == brand.toString());
 
-    if (type) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.type.includes(type));
-    
+    if (type && type !== 'All')  searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.type.includes(type));
+   
     if (material) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.material.includes(material));
     
     if (colors) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.colors.includes(colors));
