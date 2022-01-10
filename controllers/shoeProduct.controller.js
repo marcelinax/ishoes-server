@@ -71,8 +71,8 @@ const updateShoeProduct = async (req, res) => {
 }
 
 const searchShoeProduct = async (req, res) => {
-    const { query, brand, material, amount, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors } = req.body;
-    res.json(await shoeProductsService.searchShoeProducts(query, brand,amount, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors));
+    const { query, brand, material, isOutOfStock, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors } = req.body;
+    res.json(await shoeProductsService.searchShoeProducts({query, brand,isOutOfStock, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors}));
 };
 
 const getRatingsForShoeProduct = async (req, res) => {

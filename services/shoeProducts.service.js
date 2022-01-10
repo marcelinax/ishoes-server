@@ -56,7 +56,7 @@ const createOpinionForShoeProduct = async (shoeProductId, opinion) => {
     return;
 }
 
-const searchShoeProducts = async (query, brand,material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors) => {
+const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors}) => {
     let searchingShoeProducts = await ShoeProduct.find().populate('brand').lean();
 
     if (query) {
@@ -93,6 +93,11 @@ const searchShoeProducts = async (query, brand,material, size, gender, sortBy, s
 
     if (minPrice && maxPrice) {
         searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => (shoeProduct.price - (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2))) >= minPrice && (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2)) <= maxPrice);
+    }
+
+    if (isOutOfStock !== null) {
+        if (isOutOfStock === true) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.amount === 0);
+        else searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.amount > 0);
     }
 
     if(isOnSale !== null && isOnSale !== undefined) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.isOnSale === isOnSale)

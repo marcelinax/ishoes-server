@@ -42,7 +42,8 @@ const searchOrder = async (req, res) => {
 const changeOrderStatus = async (req, res) => {
     try {
         const id = req.params.id;
-        const {status} = req.body;
+        const {status}  = req.body;
+        console.log(req.body)
         const order = await ordersService.changeOrderStatus(id, status);
         res.status(201).json(order);
     } catch (error) {
