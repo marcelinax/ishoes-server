@@ -20,6 +20,8 @@ const getOrder = async (req,res) => {
     }
 }
 
+
+
 const createOrder = async (req, res) => {
     if (validationResult(req).length > 0) return res.status(400).json(validationResult(req));
 
@@ -34,9 +36,10 @@ const createOrder = async (req, res) => {
     }
 }
 
+
 const searchOrder = async (req, res) => {
-    const { orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status, phone  } = req.body;
-    res.json(await ordersService.searchOrders(orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status,phone));
+    const { orderId, email, dateOfOrder, sendDate, status, phone, page } = req.body;
+    res.json(await ordersService.searchOrders(orderId, email, dateOfOrder, sendDate, status, phone, page));
 }
 
 const changeOrderStatus = async (req, res) => {
@@ -56,6 +59,5 @@ module.exports = {
     getOrder,
     createOrder,
     searchOrder,
-    changeOrderStatus
-
+    changeOrderStatus,
 }

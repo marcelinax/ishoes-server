@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const moment = require('moment');
 
 const getAllOrders = async () => {
     const orders = await Order.find().populate('products');
@@ -10,44 +11,51 @@ const findOrderById = async (orderId) => {
     return order;
 }
 
-const createOrder = async  (newOrder) => {
+const createOrder = async (newOrder) => {
     const createdOrder = await new Order(newOrder);
     await createdOrder.save();
     return createdOrder;
 }
 
-const searchOrders = async (orderId, email, fromDateOfOrder, toDateOfOrder, fromSendDate, toSendDate, status,phone ) => {
+
+const searchOrders = async (orderId, email, dateOfOrder, sendDate, status, phone, page) => {
     let searchingOrders = await Order.find().populate('products').lean();
+    
 
     if (orderId) {
-        searchingOrders = searchingOrders.filter(order => order.orderId.includes(orderId));
+        searchingOrders = searchingOrders.filter(order => order._id.toString().startsWith(orderId.trim()));
     }
 
     if (email) {
-        searchingOrders = searchingOrders.filter(order => order.email.toLowerCase().startsWith(email.toLowerCase()));
+        searchingOrders = searchingOrders.filter(order => order.email.toLowerCase().startsWith(email.toLowerCase().trim()));
     }
 
     if (phone) {
-        searchingOrders = searchingOrders.filter(order => order.phone.startsWith(phone));
+        searchingOrders = searchingOrders.filter(order => order.phone.startsWith(phone.trim()));
     }
 
-    if (fromDateOfOrder) {
-        searchingOrders = searchingOrders.filter(order => order.createdAt >= fromDateOfOrder);
+    if (dateOfOrder) {
+        searchingOrders = searchingOrders.filter(order => moment(new Date(order.createdAt)).format('MM/DD/YYYY') === moment(new Date(dateOfOrder)).format('MM/DD/YYYY'));
     }
-    if (toDateOfOrder) {
-        searchingOrders = searchingOrders.filter(order => order.createdAt <= toDateOfOrder);
+
+    if (sendDate) {
+        searchingOrders = searchingOrders.filter(order => moment(new Date(order.sendDate)).format('MM/DD/YYYY') === moment(new Date(sendDate)).format('MM/DD/YYYY'));
     }
-    if (fromSendDate) {
-        searchingOrders = searchingOrders.filter(order => order.sendDate >= fromSendDate);
-    }
-    if (toSendDate) {
-        searchingOrders = searchingOrders.filter(order => order.sendDate <= toSendDate);
-    }
-    if (status) {
+    if (status && status !== 'all') {
         searchingOrders = searchingOrders.filter(order => order.status === status);
     }
 
-    return searchingOrders;
+    const totalItems = searchingOrders.length;
+
+    if ( page || page === 0 ) {
+        const limit = 8;
+        let startIndex = page * limit
+        let endIndex = (page + 1) * limit;
+      
+        searchingOrders = searchingOrders.slice(startIndex, endIndex)
+    }
+
+    return {searchingOrders, totalItems};
 }
 
 const changeOrderStatus = async (orderId, status) => {
@@ -62,5 +70,5 @@ module.exports = {
     findOrderById,
     createOrder,
     searchOrders,
-    changeOrderStatus
+    changeOrderStatus,
 }
