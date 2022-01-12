@@ -56,7 +56,7 @@ const createOpinionForShoeProduct = async (shoeProductId, opinion) => {
     return;
 }
 
-const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, gender, sortBy, sortHow, minPrice, maxPrice,isOnSale, type,colors}) => {
+const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, gender, sortBy, minPrice, maxPrice,isOnSale, type,colors}) => {
     let searchingShoeProducts = await ShoeProduct.find().populate('brand').lean();
 
     if (query) {
@@ -64,28 +64,26 @@ const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, ge
             || shoeProduct.brand.name.toLowerCase().includes(query.toLowerCase()));
     }
 
-    if (sortBy === 'popularity') {
-        if (sortHow === 'popular') {
-         
+    if (sortBy || sortBy === 'all') {
+        if (sortBy === 'popular') {
             searchingShoeProducts = searchingShoeProducts.sort((a, b) => getRatingsForShoeProduct(b) - getRatingsForShoeProduct(a));
         }
-    }
-
-    if (sortBy === 'added') {
-        if (sortHow === 'newest') {
+    
+        if (sortBy === 'newest') {
             searchingShoeProducts = searchingShoeProducts.sort((a, b) => b.createdAt - a.createdAt)
-            console.log(searchingShoeProducts)
         }
-        if (sortHow === 'oldest') {
+    
+        if (sortBy === 'oldest') {
             searchingShoeProducts = searchingShoeProducts.sort((a,b) => a.createdAt - b.createdAt)
         }
-    }
-
-    if (sortBy === 'price') {
-        if (sortHow === 'cheapest') searchingShoeProducts = searchingShoeProducts.sort((a, b) => (b.price - (((b.price * b.discount) /100 ).toFixed(2))) - (a.price - (((a.price * a.discount) /100 ).toFixed(2))));
-            if (sortHow === 'most expensive') searchingShoeProducts = searchingShoeProducts.sort((a, b) => (((a.price * a.discount) /100 ).toFixed(2)) - (b.price - (((b.price * b.discount) /100 ).toFixed(2))));
-    }
     
+        if (sortBy === 'low-price') searchingShoeProducts = searchingShoeProducts.sort((a, b) => (a.price - (((a.price * a.discount) /100 ).toFixed(2))) - (b.price - (((b.price * b.discount) /100 ).toFixed(2))));
+            
+        
+        if (sortBy === 'high-price') searchingShoeProducts = searchingShoeProducts.sort((a, b) => (b.price - (((b.price * b.discount) /100 ).toFixed(2))) - (a.price - (((a.price * a.discount) /100 ).toFixed(2))));
+        
+    }
+   
 
     if (size) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.size === size);
 
