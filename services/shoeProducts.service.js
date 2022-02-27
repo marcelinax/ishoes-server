@@ -56,12 +56,12 @@ const createOpinionForShoeProduct = async (shoeProductId, opinion) => {
     return;
 }
 
-const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, gender, sortBy, minPrice, maxPrice,isOnSale, type,colors}) => {
+const searchShoeProducts = async ({ query, brand, brands, isOutOfStock, material, size, sizes, gender, genders, sortBy, minPrice, maxPrice,isOnSale, type, types, colors, page}) => {
     let searchingShoeProducts = await ShoeProduct.find().populate('brand').lean();
 
     if (query) {
-        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.model.toLowerCase().includes(query.toLowerCase())
-            || shoeProduct.brand.name.toLowerCase().includes(query.toLowerCase()));
+        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.model.toLowerCase().includes(query.toLowerCase().trim())
+            || shoeProduct.brand.name.toLowerCase().includes(query.toLowerCase().trim()) || shoeProduct._id.toString().startsWith(query.trim()));
     }
 
     if (sortBy || sortBy === 'all') {
@@ -84,13 +84,19 @@ const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, ge
         
     }
    
-
     if (size) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.size === size);
+    
+    if (sizes && sizes.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => sizes.includes(shoeProduct.size));
 
-    if (gender && gender.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => gender.includes(shoeProduct.gender));
+    if (gender) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.gender === gender);
 
-    if (minPrice && maxPrice) {
-        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => (shoeProduct.price - (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2))) >= minPrice && (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2)) <= maxPrice);
+    if (genders && genders.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => genders.includes(shoeProduct.gender));
+
+
+
+    if ((minPrice || minPrice === 0 ) && (maxPrice ) ) {
+        searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => ((shoeProduct.price - (((shoeProduct.price * shoeProduct.discount) /100 ).toFixed(2))) >= minPrice && (shoeProduct.price - ((shoeProduct.price * shoeProduct.discount) /100 )).toFixed(2) <= maxPrice));
+    console.log(searchingShoeProducts)
     }
 
     if (isOutOfStock !== null) {
@@ -102,13 +108,30 @@ const searchShoeProducts = async ({query, brand,isOutOfStock, material, size, ge
 
     if (brand) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.brand._id.toString() == brand.toString());
 
-    if (type && type !== 'All')  searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.type.includes(type));
+    if (brands && brands.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => brands.includes(shoeProduct.brand._id.toString()));
+
+
+    if (type && type !== 'All') searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.type.includes(type));
+    
+    if (types && types.length > 0)  searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => types.includes(shoeProduct.type));
    
     if (material) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.material.includes(material));
     
-    if (colors) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => shoeProduct.colors.includes(colors));
+    if (colors && colors.length > 0) searchingShoeProducts = searchingShoeProducts.filter(shoeProduct => colors.some(i => shoeProduct.colors.includes(i)));
 
-    return searchingShoeProducts;
+
+
+    const totalItems = searchingShoeProducts.length;
+
+    if ( page || page === 0 ) {
+        const limit = 1;
+        let startIndex = (page - 1) * limit
+        let endIndex = page  * limit;
+      
+        searchingShoeProducts = searchingShoeProducts.slice(startIndex, endIndex)
+    }
+
+    return {searchingShoeProducts, totalItems};
 }
 
 module.exports = {
